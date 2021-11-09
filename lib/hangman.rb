@@ -43,11 +43,14 @@ end
 def play
   remaining_guesses = 6
   secret_word = random_word.chomp.split(//)
-  tracked_word = Array.new(secret_word.length) {'_'}
+  tracked_word = Array.new(secret_word.length) { '_' }
   keep_going = true
   ask_to_load
   if get_load == 'y'
-    load_game
+    tmp = load_game
+    secret_word = tmp[:secret_word]
+    tracked_word = tmp[:tracked_word]
+    remaining_guesses = tmp[:remaining_guesses]
   end
 
   while keep_going
@@ -57,18 +60,18 @@ def play
       save_game(secret_word, tracked_word, remaining_guesses)
       keep_going = false
     else
-    check_guess(secret_word, tracked_word, guess)
-    remaining_guesses -= 1 unless secret_word.include?(guess)
-    puts "Remaining misses: #{remaining_guesses}"
-    puts tracked_word.join(' ')
-    unless tracked_word.include?('_')
-      puts 'You win!'
-      keep_going = false
-    end
-    if remaining_guesses < 1
-      puts "The word was #{secret_word.join.downcase}. You lose!"
-      keep_going = false
-    end
+      check_guess(secret_word, tracked_word, guess)
+      remaining_guesses -= 1 unless secret_word.include?(guess)
+      puts "Remaining misses: #{remaining_guesses}"
+      puts tracked_word.join(' ')
+      unless tracked_word.include?('_')
+        puts 'You win!'
+        keep_going = false
+      end
+      if remaining_guesses < 1
+        puts "The word was #{secret_word.join.downcase}. You lose!"
+        keep_going = false
+      end
     end
   end
 end
